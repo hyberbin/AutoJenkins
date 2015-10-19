@@ -1,0 +1,33 @@
+这是一个自动扫描SVN提交记录来打包MAVEN的工具。
+自动隔一段时间扫描SVN提交记录。如果SVN有更新内容则待更新完成后自动打包相应模块
+
+社区版开发环境已经开启啦
+所有解释权归 hyberbin&zocakerc
+社区版开发环境包括:社区版Jenkins持续集成,社区版maven仓库Nexus,社区版Orace数据库,社区版Weblogic
+1.所有管理权限全开放,需要管理权限的亲私密社区管理员
+2.深度与飞秋结合做到有消息实时提醒,支持手机版,与飞秋互动即可参与项目构建
+3.自动监听Git,有代码提交自动打包,只打你提交文件所在的包,精彩无需等待
+4.打包错误或者成功自动提醒
+5.自动发布war包到weblogic
+6.全天候无人值守
+jenkins地址:http://192.168.1.38:8080
+nexus地址:http://192.168.1.38:8081/nexus
+oracle地址192.168.1.15  用户名密码和官方版一致
+
+更多精彩期待您的加入
+
+maven 里面setting加如下配置
+ <pluginRepositories>
+                <pluginRepository>
+                    <id>nexus</id>
+                    <url>http://192.168.1.38:8081/nexus/content/groups/public</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                        <checksumPolicy>warn</checksumPolicy>
+                    </releases>
+                </pluginRepository>
+</pluginRepositories>
