@@ -28,9 +28,6 @@ public class JenkinsConsole {
     public static JenkinsUtils jenkinsGitUtils;
     
     /**
-     * java -jar xxx.jar -path=/codes/miyunplatform/ -Juser=hyberbin -Jpass=hyb -Jurl=http://192.168.1.38:8080 
-     * -Repositorys=CAS,data,data-domains,data-framework,data-modules,framework,portal,portal-framework,portal-modules,service,service-framework,service-modules,third-parties,tools
-     * -MainJobs=framework,data-framework,data-domains,data-modules,data,service-framework,service-modules,service,portal-framework,portal-modules,portal
      * @param args
      * @throws IOException 
      */
@@ -74,9 +71,7 @@ public class JenkinsConsole {
         }
     }
     private static void testArg(){
-        SqliteUtil.setProperty("service-modulesstartRevision", "5d205c2451a06c2e3dd0786d0b90736b572428b6");
-        //String argLine="-path=/codes/miyunplatform/ -Juser=hyberbin -Jpass=hyb -Jurl=http://192.168.1.38:8080 -Repositorys=CAS,data,data-domains,data-framework,data-modules,framework,portal,portal-framework,portal-modules,service,service-framework,service-modules,third-parties,tools";
-        String argLine="-path=/codes/miyunplatform/ -Juser=hyberbin -Jpass=hyb -Jurl=http://192.168.1.38:8080 -Repositorys=service-modules";
+        String argLine="-path=/codes/platform/ -Juser=hyberbin -Jpass=hyb -Jurl=http://192.168.1.38:8080 -Repositorys=service-modules";
         setArgs(argLine.split(" "));
     }
     
