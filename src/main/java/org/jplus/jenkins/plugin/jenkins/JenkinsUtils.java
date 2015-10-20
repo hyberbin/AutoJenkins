@@ -64,9 +64,10 @@ public class JenkinsUtils {
     private synchronized boolean doBuildJob(String job) throws Exception {
         LOGGER.info("开始构建模块：{}", job);
         sendMsg("开始构建模块：{}", job);
-        getConnection().url(url + "/job/" + job + "/build?delay=0sec");
-        getConnection().followRedirects(false);
-        getConnection().post();
+        login();
+        connect.url(url + "/job/" + job + "/build?delay=0sec");
+        connect.followRedirects(false);
+        connect.post();
         Thread.sleep(3000);
         while (getLastBuild(job).isBuilding()) {
             Thread.sleep(3000);
@@ -77,17 +78,10 @@ public class JenkinsUtils {
         return success;
     }
 
-    public Connection getConnection() throws IOException {
-        if (connect == null) {
-            connect = (Connection) Jsoup.connect(url + "/j_acegi_security_check");
-            login();
-        }
-        return connect;
-    }
 
-    protected void login() throws IOException {
+    private void login() throws IOException {
         LOGGER.info("准备登录，用户名：{},密码：{}", username, password);
-        connect.url(url + "/j_acegi_security_check");
+        connect = Jsoup.connect(url + "/j_acegi_security_check");
         connect.method(Connection.Method.POST);
         connect.data("j_username", username);
         connect.data("j_password", password);
@@ -98,13 +92,6 @@ public class JenkinsUtils {
 
     }
 
-    /**
-     * 重新连接
-     */
-    public void reConnect() {
-        connect = null;
-        LOGGER.info("重置链接");
-    }
 
     /**
      * 检查工作配置名是否存在
@@ -115,8 +102,9 @@ public class JenkinsUtils {
      */
     public boolean checkJobName(String moduleName) throws IOException {
         LOGGER.info("检查工作：{}是否已经存在", moduleName);
-        getConnection().url(url + "/checkJobName?value=" + moduleName);
-        Document get = getConnection().get();
+        login();
+        connect.url(url + "/checkJobName?value=" + moduleName);
+        Document get = connect.get();
         return get.text().isEmpty();
     }
     
@@ -130,11 +118,12 @@ public class JenkinsUtils {
     public void createJob(String jobName,String configXml) throws IOException {
         LOGGER.info("准备创建工作：{}", jobName);
         sendMsg("准备创建工作：{}", jobName);
-        getConnection().url(url + "/createItem?name=" + jobName);
-        getConnection().method(Connection.Method.POST);
-        getConnection().header("Content-Type", "application/xml");
-        getConnection().setRequestBody(configXml);
-        getConnection().execute();
+        login();
+        connect.url(url + "/createItem?name=" + jobName);
+        connect.method(Connection.Method.POST);
+        connect.header("Content-Type", "application/xml");
+        connect.setRequestBody(configXml);
+        connect.execute();
     }
 
     /**
@@ -145,6 +134,7 @@ public class JenkinsUtils {
      * @throws IOException
      */
     public void createJobIfNotExist(String jobName,String configXml) throws IOException {
+        login();
         if (checkJobName(jobName)) {
             LOGGER.info("不存在工作：{},自动创建", jobName);
             sendMsg("不存在工作：{},自动创建", jobName);
@@ -168,13 +158,15 @@ public class JenkinsUtils {
     }
 
     public String getJobLog(String jobName, int jobNumber, int startLine) throws IOException {
-        getConnection().url(url + "/job/" + jobName + "/" + jobNumber + "/logText/progressiveHtml?start=" + startLine);
-        Document get = getConnection().get();
+        login();
+        connect.url(url + "/job/" + jobName + "/" + jobNumber + "/logText/progressiveHtml?start=" + startLine);
+        Document get = connect.get();
         return get.body().html();
     }
 
     public JenkinsJobBean getLastBuild(String job) throws Exception {
-        Connection conn = getConnection().url(url + "/job/" + job + "/lastBuild/api/json");
+        login();
+        Connection conn = connect.url(url + "/job/" + job + "/lastBuild/api/json");
         conn.ignoreContentType(true);
         conn.method(Connection.Method.GET);
         String json = conn.execute().body();

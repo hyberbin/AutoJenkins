@@ -22,7 +22,6 @@ import org.jplus.jenkins.plugin.jenkins.JenkinsUtils;
 import org.jplus.jenkins.plugin.svn.SVNRepositoryUtils;
 import org.jplus.jenkins.plugin.velocity.VelocityUtils;
 import org.jplus.util.IgnoreCaseMap;
-import org.jplus.util.ObjectHelper;
 
 /**
  *
@@ -98,9 +97,6 @@ public class SvnListener implements VersionListener {
     public void doBuild() {
         long time = new Date().getTime();
         Collection<String> buildList = new HashSet();
-        if (ObjectHelper.isNotEmpty(MODULES_MAP)) {
-            jenkinsUtils.reConnect();
-        }
         for (String module : MODULES_MAP.keySet()) {
             ModuleUpdateBean get = MODULES_MAP.get(module);
             if (time - get.getTime() >= waitInterval) {

@@ -93,9 +93,6 @@ public class GitListener implements VersionListener {
     public void doBuild() {
         long time = new Date().getTime();
         Collection<String> buildList = new HashSet();
-        if (ObjectHelper.isNotEmpty(MODULES_MAP)) {
-            jenkinsUtils.reConnect();
-        }
         for (String module : MODULES_MAP.keySet()) {
             ModuleUpdateBean get = MODULES_MAP.get(module);
             if (time - get.getTime() >= waitInterval) {
