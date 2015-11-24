@@ -75,6 +75,10 @@ public class GitListener implements VersionListener {
                 SqliteUtil.setProperty(name + "startRevision", nowVersion);
                 for (String changedPath : changedPaths) {
                     String moduleName = getModuleName(changedPath);
+                    if("pom.xml".equals(moduleName)||"src".equals(moduleName)){//只有一级的工程
+                        moduleName=name;
+                    }
+                    LOGGER.info("从改动路径:{}获取模块名为：{}",changedPath, moduleName);
                     if (moduleName != null) {
                         LOGGER.debug("准备构建模块：{}", moduleName);
                         MODULES_MAP.put(moduleName, new ModuleUpdateBean(name, moduleName, time));

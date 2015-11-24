@@ -84,7 +84,7 @@ public class GITRepositoryUtils implements IRepositoryUtils {
             pull.setStrategy(MergeStrategy.THEIRS);
             pull.call();
         } catch (Exception ex) {
-            Logger.getLogger(GITRepositoryUtils.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GITRepositoryUtils.class.getName()).log(Level.SEVERE, "update git:"+repositoryPath+" error!!!", ex);
         }
     }
 
