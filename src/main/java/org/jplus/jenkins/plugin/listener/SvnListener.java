@@ -103,7 +103,7 @@ public class SvnListener implements VersionListener {
                 LOGGER.debug("模块：{}上次构建时间为：{},当前时间为：{},等待时间为：{}结果参与构建", module, get.getTime(), time, waitInterval);
                 try {
                     buildList.add(module);
-                    Map map=new IgnoreCaseMap();
+                    Map map=new HashMap();
                     map.put("moduleName", module);
                     map.put("modulesPath", SqliteUtil.getProperty("svnUrl") + "/modules/");
                     String template = VelocityUtils.getTemplate("Jenkins_job_dc_module.vm", map);

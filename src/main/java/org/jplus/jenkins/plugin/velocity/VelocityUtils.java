@@ -28,7 +28,7 @@ public class VelocityUtils {
         velocity.init(prop);
     }
 
-    public static String getTemplate(String templateName, Map vars) {
+    public static synchronized String getTemplate(String templateName, Map vars) {
         Template template = velocity.getTemplate("template/" + templateName);
         //取得velocity的上下文context
         VelocityContext context = new VelocityContext();

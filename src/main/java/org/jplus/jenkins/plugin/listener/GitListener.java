@@ -53,7 +53,7 @@ public class GitListener implements VersionListener {
     }
 
     @Override
-    public void doScanSvnLog(String name) {
+    public synchronized void doScanSvnLog(String name) {
         IRepositoryUtils repositoryUtil = repositoryUtils.get(name);
         try {
             //获取有改动的文件路径
@@ -94,7 +94,7 @@ public class GitListener implements VersionListener {
     }
 
     @Override
-    public void doBuild() {
+    public synchronized void doBuild() {
         long time = new Date().getTime();
         Collection<String> buildList = new HashSet();
         for (String module : MODULES_MAP.keySet()) {
@@ -103,7 +103,7 @@ public class GitListener implements VersionListener {
                 LOGGER.debug("模块：{}上次构建时间为：{},当前时间为：{},等待时间为：{}结果参与构建", module, get.getTime(), time, waitInterval);
                 try {
                     buildList.add(module);
-                    Map map=new IgnoreCaseMap();
+                    Map map=new HashMap();
                     map.put("moduleName", module);
                     map.put("gitName", get.getRepositoryName());
                     map.put("groupId", "com.gohighedu.platform." + get.getRepositoryName().replace("-", "."));
@@ -123,7 +123,7 @@ public class GitListener implements VersionListener {
     }
 
     @Override
-    public String getModuleName(String path) {
+    public synchronized String getModuleName(String path) {
         if (!path.startsWith("/dev/")) {
             String[] split = path.split("/");
             return split[0];

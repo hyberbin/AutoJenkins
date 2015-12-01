@@ -79,7 +79,7 @@ public class JenkinsUtils {
     }
 
 
-    private void login() throws IOException {
+    private synchronized void login() throws IOException {
         LOGGER.info("准备登录，用户名：{},密码：{}", username, password);
         connect = Jsoup.connect(url + "/j_acegi_security_check");
         connect.method(Connection.Method.POST);
@@ -100,7 +100,7 @@ public class JenkinsUtils {
      * @return 存在返回false不存在返回true
      * @throws IOException
      */
-    public boolean checkJobName(String moduleName) throws IOException {
+    public synchronized boolean checkJobName(String moduleName) throws IOException {
         LOGGER.info("检查工作：{}是否已经存在", moduleName);
         login();
         connect.url(url + "/checkJobName?value=" + moduleName);
@@ -115,7 +115,7 @@ public class JenkinsUtils {
      * @param configXml 配置文件内容
      * @throws IOException
      */
-    public void createJob(String jobName,String configXml) throws IOException {
+    public synchronized void createJob(String jobName,String configXml) throws IOException {
         LOGGER.info("准备创建工作：{}", jobName);
         sendMsg("准备创建工作：{}", jobName);
         login();
@@ -133,7 +133,7 @@ public class JenkinsUtils {
      * @param configXml 配置文件内容
      * @throws IOException
      */
-    public void createJobIfNotExist(String jobName,String configXml) throws IOException {
+    public synchronized void createJobIfNotExist(String jobName,String configXml) throws IOException {
         login();
         if (checkJobName(jobName)) {
             LOGGER.info("不存在工作：{},自动创建", jobName);
@@ -157,14 +157,14 @@ public class JenkinsUtils {
         jobQueue.add(jobGroup);
     }
 
-    public String getJobLog(String jobName, int jobNumber, int startLine) throws IOException {
+    public synchronized String getJobLog(String jobName, int jobNumber, int startLine) throws IOException {
         login();
         connect.url(url + "/job/" + jobName + "/" + jobNumber + "/logText/progressiveHtml?start=" + startLine);
         Document get = connect.get();
         return get.body().html();
     }
 
-    public JenkinsJobBean getLastBuild(String job) throws Exception {
+    public synchronized JenkinsJobBean getLastBuild(String job) throws Exception {
         login();
         Connection conn = connect.url(url + "/job/" + job + "/lastBuild/api/json");
         conn.ignoreContentType(true);
@@ -174,7 +174,7 @@ public class JenkinsUtils {
         return new JenkinsJobBean(jSONObject.getBoolean("building"), "SUCCESS".equalsIgnoreCase(jSONObject.getString("result")));
     }
 
-    public void buildByOrder(final String[] jobs) {
+    public synchronized void buildByOrder(final String[] jobs) {
         LOGGER.info("构建任务组:", jobs);
         sendMsg("构建任务组:", jobs);
         addJob(jobs);
@@ -184,7 +184,7 @@ public class JenkinsUtils {
         return jobQueue;
     }
 
-    protected static void sendMsg(String msg, Object... objects) {
+    protected synchronized static void sendMsg(String msg, Object... objects) {
         FeiqManger.INSTANCE.sendMsg(msg, objects);
     }
 
